@@ -1,6 +1,8 @@
 # A Tutorial on Deploying the Data Analyst Assistant for Video Game Sales Using Amazon Bedrock Agents
 
-This solution provides a Generative AI Application reference that is able to access structured data stored in a PostgreSQL database based on a question-answering assistant that generates SQL queries to obtain the necessary data to provide an answer in natural language.
+This solution provides a Generative AI application reference that enables users to access structured data stored in a PostgreSQL database through a question-answering assistant.
+
+The assistant generates appropriate SQL queries to retrieve the requested data, provides answers in natural language, and creates data visualizations to enhance the user experience.
 
 **Also, you can change the data source to connect to your preferred database engine by adapting the Agent's instructions and the Lambda function logic.**
 
@@ -8,7 +10,7 @@ This solution provides a Generative AI Application reference that is able to acc
 
 > [!IMPORTANT]
 > This sample application is meant for demo purposes and is not production ready. Please make sure to validate the code with your organizations security best practices.
-> 
+>
 > Clean up resources after you test the demo to avoid unnecessary costs. Follow the clean-up steps provided.
 
 > [!TIP]
@@ -35,21 +37,25 @@ To deploy the application, please follow these two steps:
 
 The following images are part of a conversation analysis that includes the natural language answer, the rationale used by the LLM to generate the SQL query, the records resulting from the SQL query used to answer the question, and chart generation.
 
-**Agent answers**
+**Conversational interface with agent responding to user's questions.**
 
 ![Video Games Sales Assistant](./images/preview1.png)
 
-**Answer details including the rationale to generate the SQL**
+**Answer details including the rationale for generating the SQL query.**
 
 ![Video Games Sales Assistant](./images/preview2.png)
 
-**The record results from the SQL used to answer the question**
+**Raw query results displayed in tabular format from the SQL query.**
 
 ![Video Games Sales Assistant](./images/preview3.png)
 
-**The chart generated using the agent's answer and the record results from the SQL Query (charts created using [Apexcharts](https://apexcharts.com/))**
+**Time-series chart visualization generated based on the provided data (charts created using [Apexcharts](https://apexcharts.com/))**.
 
 ![Video Games Sales Assistant](./images/preview4.png)
+
+**Summary and conclusion derived from the data analysis conversation.**
+
+![Video Games Sales Assistant](./images/preview5.png)
 
 ## License
 

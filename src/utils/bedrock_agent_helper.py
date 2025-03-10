@@ -1552,15 +1552,22 @@ class AgentsForAmazonBedrock:
                                 datetime.datetime.now() - _time_before_routing
                             )
 
-                            _raw_resp_str = _route["modelInvocationOutput"][
-                                "rawResponse"
-                            ]["content"]
-                            _raw_resp = json.loads(_raw_resp_str)
-                            _classification = (
-                                _raw_resp["content"][0]["text"]
-                                .replace("<a>", "")
-                                .replace("</a>", "")
-                            )
+                            # _raw_resp_str = _route["modelInvocationOutput"][
+                            #     "rawResponse"
+                            # ]["content"]
+                            # _raw_resp = json.loads(_raw_resp_str)
+                            # _classification = (
+                            #     _raw_resp["content"][0]["text"]
+                            #     .replace("<a>", "")
+                            #     .replace("</a>", "")
+                            # )
+                            
+                            _content = json.loads(_route["modelInvocationOutput"]["rawResponse"]["content"])
+                            if 'content' in _content.keys():
+                                _classification = _content["content"][0]["text"]
+                            else:
+                                _classification = _content["output"]["message"]["content"][0]["text"]
+                            _classification = _classification.replace("<a>", "").replace("</a>", "")
 
                             if _classification == UNDECIDABLE_CLASSIFICATION:
                                 print(
@@ -2164,15 +2171,21 @@ class AgentsForAmazonBedrock:
                                 datetime.datetime.now() - _time_before_routing
                             )
 
-                            _raw_resp_str = _route["modelInvocationOutput"][
-                                "rawResponse"
-                            ]["content"]
-                            _raw_resp = json.loads(_raw_resp_str)
-                            _classification = (
-                                _raw_resp["content"][0]["text"]
-                                .replace("<a>", "")
-                                .replace("</a>", "")
-                            )
+                            # _raw_resp_str = 
+                            # _raw_resp = json.loads(_raw_resp_str)
+                            # _classification = (
+                            #     _raw_resp["content"][0]["text"]
+                            #     .replace("<a>", "")
+                            #     .replace("</a>", "")
+                            # )
+                            
+                            _content = json.loads(_route["modelInvocationOutput"]["rawResponse"]["content"])
+                            if 'content' in _content.keys():
+                                _classification = _content["content"][0]["text"]
+                            else:
+                                _classification = _content["output"]["message"]["content"][0]["text"]
+                            _classification = _classification.replace("<a>", "").replace("</a>", "")
+
 
                             if _classification == UNDECIDABLE_CLASSIFICATION:
                                 print(

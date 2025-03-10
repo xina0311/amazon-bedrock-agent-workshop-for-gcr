@@ -11,7 +11,10 @@ The tool supports three main functions:
 
 ## Prerequisites
 
-1. Get your RentCast API key by [registering](https://rentcast.io/api). Developer plan gives you 50 free API requests a month.
+> [!WARNING]  
+> Be aware of additional costs associated with RentCast API.  Developer plan gives you 50 free API requests a month.
+
+1. Get your RentCast API key by [registering](https://rentcast.io/api).
 
 ## Deploy [property_data_stack.yaml](/src/shared/property_data/cfn_stacks/property_data_stack.yaml)
 

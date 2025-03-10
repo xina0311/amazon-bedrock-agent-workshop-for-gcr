@@ -2171,7 +2171,9 @@ class AgentsForAmazonBedrock:
                                 datetime.datetime.now() - _time_before_routing
                             )
 
-                            # _raw_resp_str = 
+                            # _raw_resp_str = _route["modelInvocationOutput"][
+                            #     "rawResponse"
+                            # ]["content"]
                             # _raw_resp = json.loads(_raw_resp_str)
                             # _classification = (
                             #     _raw_resp["content"][0]["text"]

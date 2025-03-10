@@ -11,14 +11,17 @@ The tool supports three main functions:
 
 ## Prerequisites
 
-1. Get your RentCast API key by [registering](https://rentcast.io/api). Developer plan gives you 50 free API requests a month.
+> [!WARNING]  
+> Be aware of additional costs associated with RentCast API.  Developer plan gives you 50 free API requests a month.
+
+1. Get your RentCast API key by [registering](https://rentcast.io/api).
 
 ## Deploy [property_data_stack.yaml](/src/shared/property_data/cfn_stacks/property_data_stack.yaml)
 
 |   Region   | property_data_stack.yaml |
 | ---------- | ----------------- |
-| us-east-1  | [![launch-stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=PropertyData&templateURL=...property_data_stack.yaml)|
-| us-west-2  | [![launch-stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=PropertyData&templateURL=...property_data_stack.yaml)|
+| us-east-1  | [![launch-stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=PropertyData&templateURL=https://ws-assets-prod-iad-r-iad-ed304a55c2ca1aee.s3.us-east-1.amazonaws.com/1031afa5-be84-4a6a-9886-4e19ce67b9c2/tools/property_data_stack.yaml)|
+| us-west-2  | [![launch-stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=PropertyData&templateURL=https://ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0.s3.us-west-2.amazonaws.com/1031afa5-be84-4a6a-9886-4e19ce67b9c2/tools/property_data_stack.yaml)|
 
 ## Tool Functions
 

@@ -18,15 +18,18 @@ By the end of this tutorial, you'll have the Amazon Bedrock Agent working in the
 
 **Before proceeding further, verify that you have successfully installed and configured all the listed prerequisites in your development environment.**
 
-## SAM Deployment
+## Database and Back-End Deployment with SAM
 
-Under this SAM project folder execute the following commands to deploy the backend services for the Assistant:
+To deploy the backend services for the Assistant, execute the following commands in your SAM project folder:
 
 ```bash
 sam build
 ```
 
-Note: By default, the Python version used for the Lambda Function is 3.9. If you receive a **Build Failed** error, change to the Python version (>3.9) that you have in **template.yaml** file in line **56**.
+> [!NOTE]
+> If you receive a **Build Failed error**, then you might need to change the Python version in the **template.yaml** file. By default, the Lambda Function uses Python 3.9. You can modify this setting on **line 56** of the **template.yaml** file to use a Python version that is higher than 3.9 that you have installed.
+
+Now execute the following command to perform a first SAM deployment:
 
 ```bash
 sam deploy --guided
@@ -46,12 +49,22 @@ Use the following value arguments for the deployment configuration:
 - SAM configuration file : **samconfig.toml**
 - SAM configuration environment : **default**
 
-After uploading the SAM project and changeset created:
+After the SAM project preparation and changeset created, confirm the following to start the deployment:
 
 - Deploy this changeset? [y/N]: **Y**
 
+After the SAM deployment finishes, you will have the following main services created:
+- The Lambda Function API that the agent will use.
+- The Aurora Serverless PostgreSQL Cluster Database.
+- A DynamoDB Table for tracking questions and query details.
+
 > [!TIP]
-> Alternatively, you can choose to follow [this manual](./manual_database_data_load_and_agent_creation.md) to continue creating the Amazon Bedrock Agent step-by-step in the AWS Console. Otherwise, continue with the instructions below.
+> Alternatively, you can choose to follow [this manual](./manual_database_data_load_and_agent_creation.md) to continue creating the Amazon Bedrock Agent step-by-step in the AWS Console. **Otherwise, continue with the instructions below**.
+
+
+## Preparing the Database and Creating the Amazon Bedrock Agent
+
+To create the agent with the provided scripts, run the following commands to prepare the environment variables that you will need:
 
 ``` bash
 # Set the stack name environment variable
@@ -80,9 +93,9 @@ EOF
 
 ```
 
-## Loading Data Sample to the PostgreSQL Databae
+### Loading Data Sample to the PostgreSQL Databae
 
-Execute the following command to create the database and load the data source.
+Execute the following command to create the database and load the data source:
 
 ``` bash
 pip install boto3
@@ -94,7 +107,7 @@ The script executed uses the **[video_games_sales_no_headers.csv](./resources/da
 > [!NOTE]
 > The data source provided contains information from [Video Game Sales](https://www.kaggle.com/datasets/asaniczka/video-game-sales-2024) which is made available under the [ODC Attribution License](https://opendatacommons.org/licenses/odbl/1-0/).
 
-## Amazon Bedrock Agent Creation
+### Amazon Bedrock Agent Creation
 
 Execute the following command to create the Amazon Bedrock Agent. This step will take about 30 seconds.
 
@@ -110,9 +123,9 @@ The Amazon Bedrock Agent was created and configured with the following informati
 > [!IMPORTANT] 
 > Enhance AI safety and compliance by implementing [Amazon Bedrock Guardrails](https://aws.amazon.com/bedrock/guardrails/) for your AI applications.
 
-## Testing the Agent
+### Testing the Agent in the AWS Console
 
-Now you can go back to your Amazon Bedrock Agen called **video-games-sales-assistant**, click on **Edit Agent Builder**, in the **Agent builder** section click on **Save**, **Prepare** and **Test**, use the **Test Agent** with the following sample questions:
+Now you can go back to your Amazon Bedrock Agent called **video-games-sales-assistant**, click on **Edit Agent Builder**, in the **Agent builder** section click on **Save**, **Prepare** and **Test**, use the **Test Agent** with the following sample questions:
 
 - Hello
 - How can you help me?
@@ -127,9 +140,11 @@ Now you can go back to your Amazon Bedrock Agen called **video-games-sales-assis
 - Which are the most popular consoles and why?
 - Give me a short summary and conclusion.
 
-## Create Alias Agent Application
+## Create Alias Agent for the Front-End Application
 
-To use the Agent application, once you have a **Prepared** version for testing, go to your **Agent overview** and click on **Create Alias** to use it from your front-end application.
+To use the agent in the front-end application, you need to **create an Alias of your agent**. After you have prepared a version for testing purposes, go to your **Agent Overview** and click on **Create Alias** so that you can use the alias point.
+
+You can now follow the tutorial [Getting Started with Amplify Video Games Sales Assistant](../amplify-video-games-sales-assistant-sample/) to deploy the front-end application. The tutorial will ask you for your your alias along with the other services that you have created so far.
 
 ## Cleaning-up Resources (optional)
 

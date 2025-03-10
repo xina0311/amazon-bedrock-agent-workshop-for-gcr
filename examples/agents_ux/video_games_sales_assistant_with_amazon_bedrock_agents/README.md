@@ -20,8 +20,8 @@ The assistant generates appropriate SQL queries to retrieve the requested data, 
 
 To deploy the application, please follow these two steps:
 
-1. [Getting Started with SAM Video Games Sales Assistant and Amazon Bedrock Agents](./sam-bedrock-video-games-sales-assistant/)
-2. [Getting Started with Amplify Video Games Sales Assistant](./amplify-video-games-sales-assistant-sample/)
+1. **Generative AI Application and Data Source**: [Getting Started with SAM Video Games Sales Assistant and Amazon Bedrock Agents](./sam-bedrock-video-games-sales-assistant/)
+2. **Front-End Application**: [Getting Started with Amplify Video Games Sales Assistant](./amplify-video-games-sales-assistant-sample/)
 
 > [!NOTE]
 > *It is recommended to use the Oregon (us-west-2) or N. Virginia (us-east-1) regions to deploy the application.*
@@ -37,23 +37,23 @@ To deploy the application, please follow these two steps:
 
 The following images are part of a conversation analysis that includes the natural language answer, the rationale used by the LLM to generate the SQL query, the records resulting from the SQL query used to answer the question, and chart generation.
 
-**Conversational interface with agent responding to user's questions.**
+- **Conversational interface with agent responding to user's questions.**
 
 ![Video Games Sales Assistant](./images/preview1.png)
 
-**Answer details including the rationale for generating the SQL query.**
+- **Answer details including the rationale for generating the SQL query.**
 
 ![Video Games Sales Assistant](./images/preview2.png)
 
-**Raw query results displayed in tabular format from the SQL query.**
+- **Raw query results displayed in tabular format from the SQL query.**
 
 ![Video Games Sales Assistant](./images/preview3.png)
 
-**Time-series chart visualization generated based on the provided data (charts created using [Apexcharts](https://apexcharts.com/))**.
+- **Time-series chart visualization generated based on the provided data (charts created using [Apexcharts](https://apexcharts.com/))**.
 
 ![Video Games Sales Assistant](./images/preview4.png)
 
-**Summary and conclusion derived from the data analysis conversation.**
+- **Summary and conclusion derived from the data analysis conversation.**
 
 ![Video Games Sales Assistant](./images/preview5.png)
 

@@ -66,17 +66,17 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 
 ## Prerequisites
 
-1.AWS Command Line Interface (CLI), follow instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). Make sure to setup credentials, follow instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html).
+1. AWS Command Line Interface (CLI), follow instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). Make sure to setup credentials, follow instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html).
 
-2.Require [Python 3.11](https://www.python.org/downloads/) or later.
+2. Require [Python 3.11](https://www.python.org/downloads/) or later.
 
-3.Require [Node.js](https://nodejs.org/en/download/) 14.15.0 or later.
+3. Require [Node.js](https://nodejs.org/en/download/) 14.15.0 or later.
 
-4.AWS CDK CLI, follow instructions [here](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html).
+4. AWS CDK CLI, follow instructions [here](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html).
 
-5.Enable [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) for Anthropic’s Claude Sonnet 3.5 V2 and for Anthropic’s Claude Sonnet 3.7 V1.
+5. Enable [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) for Anthropic’s Claude Sonnet 3.5 V2 and for Anthropic’s Claude Sonnet 3.7 V1.
 
-6.[Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) version >= 1.37.10.
+6. [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) version >= 1.37.10.
 
 
 ## Quick Start

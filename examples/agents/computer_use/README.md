@@ -113,12 +113,14 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 
 5. Deploy the solution in **Fail-Secure Mode** (Default). This is the recommended setting for the sandbox environment.
 
-    > [!IMPORTANT]
-    > In **Fail-Secure Mode** if no IP address is provided, the security groups will default to a highly restrictive setting (255.255.255.255/32) that effectively blocks all access.
-    > [!IMPORTANT]
-    > Make sure you review all the resources created by the project before deploying.
-    > [!IMPORTANT]
-    > Make sure only run one of the following commands.
+> [!IMPORTANT]
+> In **Fail-Secure Mode** if no IP address is provided, the security groups will default to a highly restrictive setting (255.255.255.255/32) that effectively blocks all access.
+
+> [!IMPORTANT]
+> Make sure you review all the resources created by the project before deploying.
+
+> [!IMPORTANT]
+> Make sure only run one of the following commands.
 
     ```bash
     # Deploy with your current IP (Fail-Secure)
@@ -144,10 +146,11 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 
 7. Create Amazon Bedrock Agent (w/ Computer, Text Editor and Bash Action Groups) and Amazon Bedrock Guardrail
 
-    > [!IMPORTANT]
-    > Make sure to enable [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html) before creating Amazon Bedrock Agent.
-    > [!IMPORTANT]
-    > Make sure computer use is supported by the provided model and this project.
+> [!IMPORTANT]
+> Make sure to enable [model access](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html) before creating Amazon Bedrock Agent.
+
+> [!IMPORTANT]
+> Make sure computer use is supported by the provided model and this project.
 
     ```bash
     make bedrock PROFILE_NAME=computeruse MODEL_ID=us.anthropic.claude-3-7-sonnet-20250219-v1:0 # defaults to us.anthropic.claude-3-7-sonnet-20250219-v1:0

@@ -13,18 +13,16 @@ By the end of this tutorial, you'll have a fully functional Generative AI web ap
 
 - An **Alias** created from your **Amazon Bedrock Agent** that you created in the first tutorial.
 - [Node.js > 18 version required](https://nodejs.org/en/download/package-manager)
+- React Scripts installed by executing the following command:
+``` bash
+npm install react-scripts
+```
 
 **Before proceeding further, verify that you have successfully installed and configured all the listed prerequisites in your development environment.**
 
-## Amplify Deployment
+## Prepare your Front-End Application
 
-Use the following instructions for deploying the React front-end application with Amplify.
-
-[Install the Amplify CLI](https://docs.amplify.aws/gen1/react/tools/cli/start/set-up-cli/) with the following command:
-
-``` bash
-npm install -g @aws-amplify/cli 
-```
+Set up dependencies, configure permissions, and prepare environment variables for your React application to interact with Amazon Bedrock and Amazon DynamoDB.
 
 ### Install React Application Dependencies
 
@@ -34,20 +32,9 @@ Command to install required npm packages for React.
 npm install
 ```
 
-### Initialize the Amplify Application using **Gen1**
+### Create an IAM User Access Keys for your Front-End Application Permissions
 
-Run amplify init to set up the Amplify project.
-
-``` bash
-amplify init
-```
-
-- To initialize the project use the **suggested configuration**.
-- Select your authentication method.
-
-### Create an IAM User Access Keys for your Front-end Application Permissions
-
-[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [create Access key and Secret access key](https://docs.aws.amazon.com/keyspaces/latest/devguide/create.keypair.html) for programmatic access to your front-end application.
+**[Create an IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html) and [create Access key and Secret access key](https://docs.aws.amazon.com/keyspaces/latest/devguide/create.keypair.html) for programmatic access to your front-end application**, you will use these credentials in **env.js** file.
 
 In the **Permissions policies** section of you user, click **Add permissions** and then click **Create inline policy** to add the following inline policy using the **JSON Policy editor**, update the values with your **<agent_arn>**, **<agent_id>**, **<account_id>** and **<question_answers_table_arn>** that you can find in the outputs from the SAM tutorial.
 
@@ -91,11 +78,11 @@ In the **Permissions policies** section of you user, click **Add permissions** a
 }
 ```
 
-### Configure the Environment Variables for the Front-end Application
+### Configure the Environment Variables for the Front-End Application
 
 Rename the file **src/sample.env.js** to **src/env.js** and update the values of the following variables.
 
-AWS credentials and AWS region used for your deployment:
+AWS credentials of the IAM user that you created previously and the AWS Region that you are using for the deployment:
 - **ACCESS_KEY_ID**
 - **SECRET_ACCESS_KEY**
 - **AWS_REGION**
@@ -111,27 +98,16 @@ Also, you can update the general application description:
 - **APP_SUBJECT**
 - **WELCOME_MESSAGE**
 
-### Add Hosting and Testing
 
-Run the following command to add hosting to your Amplify project:
+### Testing your Data Analyst Assistant
 
-``` bash
-amplify add hosting
-```
-
-Use the following configuration:
-- Select the plugin module to execute · **Hosting with Amplify Console (Managed hosting with custom domains, Continuous deployment)**
-- Choose a type **Manual deployment**
+Now you can test your front-end application locally. Execute the following command:
 
 ``` bash
-amplify publish
+npm start
 ```
 
-Copy the provided URL to access your application.
-
-### Testing your Data Analyst Assistant Generative AI Application
-
-Sample questions to test the Data Analyst Assistant AI application:
+You can use the following sample questions to test the Data Analyst Assistant:
 
 - Hello
 - How can you help me?
@@ -145,6 +121,71 @@ Sample questions to test the Data Analyst Assistant AI application:
 - Which is the year with the highest number of games released?
 - Which are the most popular consoles and why?
 - Give me a short summary and conclusion.
+
+## Using Amplify for Hosting your Front-End Application
+
+Execute the following commands for hosting the React front-end application in Amplify.
+
+[Install the Amplify CLI](https://docs.amplify.aws/gen1/react/tools/cli/start/set-up-cli/) with the following command:
+
+``` bash
+npm install -g @aws-amplify/cli
+```
+
+### Initialize the Amplify Application using **Gen1**
+
+Set up the Amplify project by executing the following command:
+
+``` bash
+amplify init
+```
+
+- To initialize the project use the **suggested configuration**.
+- Select your authentication method.
+
+### Add Hosting and Testing
+
+Execute the following commands to add hosting to your Amplify project:
+
+
+``` bash
+amplify add hosting
+```
+
+Use the following configuration:
+- Select the plugin module to execute · **Hosting with Amplify Console (Managed hosting with custom domains, Continuous deployment)**
+- Choose a type **Manual deployment**
+
+``` bash
+amplify publish
+```
+
+After the publishing finishes, you can copy the provided **URL** to access your front-end application.
+
+## Front-End Application Preview Images
+
+Congratulations, now you have your Data Analyst Assistant where you can interact and have the following:
+
+- **Conversational interface with agent responding to user's questions.**
+
+![Video Games Sales Assistant](../images/preview1.png)
+
+- **Answer details including the rationale for generating the SQL query.**
+
+![Video Games Sales Assistant](../images/preview2.png)
+
+- **Raw query results displayed in tabular format from the SQL query.**
+
+![Video Games Sales Assistant](../images/preview3.png)
+
+- **Time-series chart visualization generated based on the provided data (charts created using [Apexcharts](https://apexcharts.com/))**.
+
+![Video Games Sales Assistant](../images/preview4.png)
+
+- **Summary and conclusion derived from the data analysis conversation.**
+
+![Video Games Sales Assistant](../images/preview5.png)
+
 
 ## Cleaning-up Resources (optional)
 

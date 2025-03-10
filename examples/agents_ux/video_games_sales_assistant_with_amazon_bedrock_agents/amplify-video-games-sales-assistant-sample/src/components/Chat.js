@@ -14,11 +14,10 @@ import Grow from '@mui/material/Grow';
 import Stack from '@mui/material/Stack';
 import Fade from '@mui/material/Fade';
 import { v4 as uuidv4 } from 'uuid';
-import { BedrockAgentRuntimeClient, InvokeAgentCommand, BedrockAgentRuntimeClientConfigType } from "@aws-sdk/client-bedrock-agent-runtime";
+import { BedrockAgentRuntimeClient, InvokeAgentCommand } from "@aws-sdk/client-bedrock-agent-runtime";
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
@@ -488,12 +487,12 @@ const Chat = ({}) => {
 
                                     <Grid container spacing={2} sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Grid>
-                                            <IconButton 
-                                                size="small"
+                                            <Button
+                                                color="secondary"
                                                 onClick={handleClickOpenAnswerDetails(index)}
-                                                >
-                                                    <PsychologyRoundedIcon fontSize="small" />
-                                            </IconButton>
+                                                startIcon={<PsychologyRoundedIcon />}>
+                                                Details
+                                            </Button>
                                         </Grid>
 
                                         { answer.queryResults.length>0 && (
@@ -551,7 +550,7 @@ const Chat = ({}) => {
                                 fontWeight: 500, 
                                 pt: 1, pb:1, pl:2, pr: 2, mb: 1, mt: 2, mr:1,
                                 boxShadow: 'rgba(0, 0, 0, 0.05) 0px 4px 12px',
-                                background: "#B2DFDB"
+                                background: "#A4E9DB"
                                 }}>
                                 <Typography variant="body1">
                                     { answer.query }
@@ -570,7 +569,7 @@ const Chat = ({}) => {
                         <Box sx={{ 
                             pt:1, pb:1, pl:2, pr: 2, m:0, borderRadius: 4, display: "flex",
                             boxShadow: 'rgba(0, 0, 0, 0.05) 0px 4px 12px',
-                            background: "#B2DFDB"
+                            background: "#A4E9DB"
                             }}
                         >
                             <Typography variant="body1">Answering your question...</Typography>
@@ -606,7 +605,7 @@ const Chat = ({}) => {
                 borderRadius: 6
             })}
             >
-            <Box sx={{ pt:1 }}>
+            <Box sx={{ pt:1.5, pl:0.5 }}>
                 <img src="/images/AWS_logo_RGB.png" alt="Amazon Web Services" height={20} />
             </Box>
             <InputBase

@@ -55,7 +55,7 @@ function AnswerDetailsDialog(props) {
                     </Grid>
                     <Grid sm={12} md={6} lg={6} >
                         <Box sx={{ borderRadius: 4, pl:2, pr:2, pt:2,
-                            background: "#B2DFDB"
+                            background: "#A4E9DB"
                             }} >
                             <Box>
                                 {runningTraces.map((row,index) => (

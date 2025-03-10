@@ -41,8 +41,11 @@ function LayoutApp() {
   const defaultTheme = createTheme({
     palette: {
       primary: {
-        main: "#4091AD"
+        main: "#44B8AC"
       },
+      secondary: {
+        main: "#006f66"
+      }
     }
   });
 

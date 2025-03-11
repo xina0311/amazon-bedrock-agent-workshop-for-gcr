@@ -119,7 +119,7 @@ make configure PROFILE_NAME=computeruse
     ```bash
     source .venv/bin/activate
     pip install -r requirements.txt
-	  pip install -U -r requirements.txt
+    pip install -U -r requirements.txt
     ```
 
 5. Deploy the solution in **Fail-Secure Mode** (Default). This is the recommended setting for the sandbox environment.

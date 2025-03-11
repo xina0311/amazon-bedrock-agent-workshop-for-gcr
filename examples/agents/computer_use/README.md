@@ -84,7 +84,9 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 1. Clone the repository:
 
     ```bash
-    make clone
+    git clone https://github.com/awslabs/amazon-bedrock-agent-samples/
+    cd amazon-bedrock-agent-samples/examples/agents/computer_use
+    chmod +x scripts/get_urls.sh
     ```
 
 2. Configure AWS CLI for us-west-2 (if not already configured):

@@ -6,9 +6,9 @@ MODEL_ID ?= us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
 configure: create-profile configure-aws-region
 
-setup: create-venv activate-venv install bootstrap
-
 bedrock : create-guardrail create-agent
+
+setup: create-venv bootstrap
 
 clean-bedrock: delete-guardrail delete-agent 
 
@@ -26,15 +26,9 @@ create-profile:
 
 # Create, setup and activate virtual environment
 create-venv:
+	pip install virtualenv
 	pip install --upgrade virtualenv
 	python3 -m venv .venv
-
-activate-venv:
-	. .venv/bin/activate
-
-install:
-	pip install -r requirements.txt
-	pip install -U -r requirements.txt
 
 # Infrastructure
 bootstrap:

@@ -2,6 +2,8 @@
 PROFILE_NAME ?= computeruse
 MODEL_ID ?= us.anthropic.claude-3-7-sonnet-20250219-v1:0
 
+.PHONY: create-profile get-urls create-agent delete-agent list-agent create-guardrail delete-guardrail bedrock clean-bedrock
+
 configure: create-profile configure-aws-region
 
 setup: create-venv activate-venv install bootstrap
@@ -10,11 +12,6 @@ bedrock : create-guardrail create-agent
 
 clean-bedrock: delete-guardrail delete-agent 
 
-# Clone the repository
-clone:
-	git clone https://github.com/awslabs/amazon-bedrock-agent-samples/
-	cd amazon-bedrock-agent-samples/examples/agents/computer_use
-	chmod +x scripts/get_urls.sh
 
 # Configure AWS CLI
 configure-aws-region:

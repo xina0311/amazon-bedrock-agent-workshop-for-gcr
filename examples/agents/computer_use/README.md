@@ -95,17 +95,18 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 
 2. Configure AWS CLI for us-west-2 (if not already configured):
 
-    > [!IMPORTANT]
-    > 1. You can skip this step if you already have a profile created. Make sure to use the correct profile name in subsequent commands.
-    > 2. Make sure to select us-west-2 region.
+> [!IMPORTANT]
+> 1. You can skip this step if you already have a profile created. Make sure to use the correct profile name in subsequent commands.
+> 2. Make sure to select us-west-2 region.
 
-    ```bash
-    make configure PROFILE_NAME=computeruse
-    ```
+```bash
+make configure PROFILE_NAME=computeruse
+```
 
-    <p align="center">
-      <img src="./architecture/aws_cli_configure.png"/>
-    </p>  
+
+<p align="center">
+  <img src="./architecture/aws_cli_configure.png"/>
+</p>  
 
 3. Setup Environment
 

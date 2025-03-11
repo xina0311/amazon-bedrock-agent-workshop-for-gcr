@@ -8,11 +8,15 @@
 > To ensure proper oversight, keep a human in the loop for sensitive tasks (such as making decisions that could have meaningful real-world consequences) and for anything requiring affirmative consent (such as accepting cookies, executing financial transactions, or agreeing to terms of service).
 > Any content that you enable Claude to see or access can potentially override instructions or cause Claude to make mistakes or perform unintended actions. Taking proper precautions, such as isolating Claude from sensitive surfaces, is essential — including to avoid risks related to prompt injection. Before enabling or requesting permissions necessary to enable computer use features in your own products, please inform end users of any relevant risks, and obtain their consent as appropriate.
 
-![architecture](./architecture/architecture.png)
+<p align="center">
+  <img src="./architecture/architecture.png"/>
+</p>  
 
 This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk/) (CDK) infrastructure code for deploying the computer use agent using Amazon Bedrock Agent in the us-west-2 (Oregon) region.
 
-![infrastructure](./architecture/infrastructure.png)
+<p align="center">
+  <img src="./architecture/infrastructure.png"/>
+</p>  
 
 
 <details>
@@ -98,10 +102,12 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
     ```bash
     make configure PROFILE_NAME=computeruse
     ```
-  
-    ![cli](./architecture/aws_cli_configure.png)
 
-3. Setup Environment and bootstrap AWS Account
+    <p align="center">
+      <img src="./architecture/aws_cli_configure.png"/>
+    </p>  
+
+3. Setup Environment
 
     ```bash
     make setup PROFILE_NAME=computeruse
@@ -111,6 +117,8 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 
     ```bash
     source .venv/bin/activate
+    pip install -r requirements.txt
+	  pip install -U -r requirements.txt
     ```
 
 5. Deploy the solution in **Fail-Secure Mode** (Default). This is the recommended setting for the sandbox environment.
@@ -201,11 +209,15 @@ async with aiohttp.ClientSession() as session:
 
 After navigating to the Orchestration Service URL (Streamlit interface), you'll need to provide the Agent Id and Agent Alias Id.
 
-![agentConfig](./architecture/agent_config.png)
+<p align="center">
+  <img src="./architecture/agent_config.png"/>
+</p>  
 
 Select the foundational model that you used to create Amazon Bedrock Agent. Each foundational model has its own set of tool implementation. 
 
-![model](./architecture/model.png)
+<p align="center">
+  <img src="./architecture/model.png"/>
+</p>  
 
 <details>
   <summary>

@@ -95,11 +95,11 @@ This project contains the [AWS Cloud Development Kit](https://aws.amazon.com/cdk
 > 1. You can skip this step if you already have a profile created. Make sure to use the correct profile name in subsequent commands.
 > 2. Make sure to select us-west-2 region.
 
-    ```bash
-    make configure PROFILE_NAME=computeruse
-    ```
-  
-    ![cli](./architecture/aws_cli_configure.png)
+```bash
+make configure PROFILE_NAME=computeruse
+```
+
+![cli](./architecture/aws_cli_configure.png)
 
 3. Setup Environment and bootstrap AWS Account
 

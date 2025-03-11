@@ -133,21 +133,21 @@ make configure PROFILE_NAME=computeruse
 > [!IMPORTANT]
 > Make sure only run one of the following commands.
 
-    ```bash
-    # Deploy with your current IP (Fail-Secure)
-    make deploy-infrastructure PROFILE_NAME=computeruse
+  ```bash
+  # Deploy with your current IP (Fail-Secure)
+  make deploy-infrastructure PROFILE_NAME=computeruse
 
-    # Deploy with manual IP (Fail-Secure)
-    make deploy IP=203.0.113.1 PROFILE_NAME=computeruse
-    # This will automatically be converted to 203.0.113.1/32
+  # Deploy with manual IP (Fail-Secure)
+  make deploy IP=203.0.113.1 PROFILE_NAME=computeruse
+  # This will automatically be converted to 203.0.113.1/32
 
-    # Deploy with IP address range (Fail-Secure)
-    make deploy IP=203.0.113.0/24 PROFILE_NAME=computeruse
-    # Allows 203.0.113.0 through 203.0.113.255
-    ```
+  # Deploy with IP address range (Fail-Secure)
+  make deploy IP=203.0.113.0/24 PROFILE_NAME=computeruse
+  # Allows 203.0.113.0 through 203.0.113.255
+  ```
 
-    > [!NOTE]
-    > This stack takes **~10-15 minutes** to deploy. After the deployment **it may take a few additional minutes** for the Environment/Virtual Machine to come online.
+  > [!NOTE]
+  > This stack takes **~10-15 minutes** to deploy. After the deployment **it may take a few additional minutes** for the Environment/Virtual Machine to come online.
 
 6. After the deploy has completed, you can get the URLs of the services:
 
@@ -163,9 +163,9 @@ make configure PROFILE_NAME=computeruse
 > [!IMPORTANT]
 > Make sure computer use is supported by the provided model and this project.
 
-    ```bash
-    make bedrock PROFILE_NAME=computeruse MODEL_ID=us.anthropic.claude-3-7-sonnet-20250219-v1:0 # defaults to us.anthropic.claude-3-7-sonnet-20250219-v1:0
-    ```
+  ```bash
+  make bedrock PROFILE_NAME=computeruse MODEL_ID=us.anthropic.claude-3-7-sonnet-20250219-v1:0 # defaults to us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  ```
 
 8. List Amazon Bedrock Agent Id and Alias Id - store these values for later use.
 
@@ -245,18 +245,18 @@ Select the foundational model that you used to create Amazon Bedrock Agent. Each
   1. Edit the `cfn_firewall_domain_list` in `computer_use_aws_stack.py`
   2. Add or remove domains using the following format:
 
-    ```python
-    domains=[
-        "example.com",      # Allow exact domain
-        "*.example.com",    # Allow all subdomains
-    ]
-    ```
+  ```python
+  domains=[
+      "example.com",      # Allow exact domain
+      "*.example.com",    # Allow all subdomains
+  ]
+  ```
 
   3. Redeploy the stack:
 
-    ```bash
-    cdk deploy
-    ```
+  ```bash
+  cdk deploy
+  ```
 
   ### Managing DNS Firewall Rules
 

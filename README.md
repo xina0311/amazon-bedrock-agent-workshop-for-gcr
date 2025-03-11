@@ -93,6 +93,7 @@ The solutions presented here use the [boto3 SDK in Python](https://boto3.amazona
 - [Agent with long term memory](/examples/agents/agent_with_long_term_memory/)
 - [Agent using models not yet optimized for Bedrock Agents](/examples/agents/agent_with_models_not_yet_optimized_for_bedrock_agents/)
 - [AWS CDK Agent](/examples/agents/cdk_agent/)
+- [Computer use Agent](/examples/agents/computer_use/)
 - [Custom orchestration Agent](/examples/agents/custom_orchestration_agent/)
 - [Configure an inline agent at runtime](/examples/agents/inline_agent/)
 - [Utilize LangChain Tools with Amazon Bedrock Inline Agents](/examples/agents/langchain_tools_with_inline_agent/)

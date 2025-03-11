@@ -87,3 +87,8 @@ Adding [Agent with access to house security camera in cloudformation](/examples/
 
 1. [Economic Data Tool](/src/shared/economic_data/)
 2. [Property Data Tool](/src/shared/property_data/)
+
+
+## 03/10/2025
+
+[Computer use Agent](/examples/agents/computer_use/)

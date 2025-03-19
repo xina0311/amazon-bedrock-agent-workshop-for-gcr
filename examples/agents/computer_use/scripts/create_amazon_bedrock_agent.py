@@ -73,6 +73,10 @@ def create_agent_role(
         "iam", region_name="us-west-2"
     )
 
+    sts_client = boto3.session.Session(profile_name=profile).client("sts", region_name="us-west-2")
+    identity = sts_client.get_caller_identity()
+    account_id = identity["Account"]
+
     DEFAULT_AGENT_IAM_POLICY = {
         "Version": "2012-10-17",
         "Statement": [
@@ -88,7 +92,7 @@ def create_agent_role(
                     "bedrock:GetGuardrail",
                 ],
                 "Resource": [
-                    f"arn:aws:bedrock:us-west-2:183212360838:inference-profile/{model_id}",
+                    f"arn:aws:bedrock:us-west-2:{account_id}:inference-profile/{model_id}",
                     f"arn:aws:bedrock:*::foundation-model/{model_id.replace("us.", "")}",
                     f"arn:aws:bedrock:us-west-2:*:guardrail/{guardrail_id}",
                 ],

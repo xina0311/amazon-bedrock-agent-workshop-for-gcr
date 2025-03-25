@@ -1,58 +1,35 @@
-# Bedrock Agent Instrumentation
+# Amazon Bedrock Agent Observability Tools
+This repository contains two implementations for instrumenting AWS Bedrock Agents to provide comprehensive observability:
 
-An OpenTelemetry instrumentation framework for AWS Bedrock Agents using OpenInference semantic convention.
+> OpenInference Instrumentation: A framework that leverages OpenInference semantic conventions for tracing Bedrock Agent invocations.
 
-## Files
-- `main.py`: Core instrumentation wrapper for Bedrock Agent invocations using python file
-- `example-notebook.ipynb`: Core instrumentation wrapper for Bedrock Agent invocations using a jupyter notebook
-- `config.py`: Configuration for different tracing backends (Arize, Langfuse). Please configure your API keys here
-- `processors.py`: Processes traces (preprocessing, orchestration, etc.)
-- `handlers.py`: Handles trace events (LLM calls, tools, etc.) 
-- `utils.py`: Utilities for timing and trace management
+> OpenTelemetry Instrumentation: A complete observability solution that follows OpenTelemetry standards to send trace data to any compatible platform.
 
-## Setup
+## Purpose
+These tools enable developers to gain visibility into their Bedrock Agent interactions, helping with:
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+- Debugging complex agent behaviors
+- Understanding performance patterns and bottlenecks
+- Monitoring token usage and costs
+- Analyzing the flow of information through agents
 
-2. Decorate your invoke_agent api call:
-```python
-@instrument_agent_invocation
-def invoke_bedrock_agent(inputText: str, agentId: str, agentAliasId: str, sessionId: str):
-    bedrock_rt_client = boto3.client('bedrock-agent-runtime')
-    response = bedrock_rt_client.invoke_agent(
-        inputText=inputText,
-        agentId=agentId,
-        agentAliasId=agentAliasId,
-        sessionId=sessionId,
-        enableTrace=True
-    )
-    return response
-```
+### Important Note
+The field of GenAI observability is rapidly evolving. These implementations combine established GenAI observability semantics with Amazon Bedrock Agent-specific semantics. They will be updated as more standardized semantics become available in the industry.
 
+## Repository Structure
 
-3. Modify main.py:
-```python
-if __name__ == "__main__":
-    try:
-        agentId='agent-id',
-        agentAliasId='agent-alias-is'
-        sessionId='define-session-id'
-        trace_collector="arize_cloud" # langfuse, and arize_local are other options
-        userId = "Somename"
-        questions = "your prompt goes here"
+- /open-inference-instrumentation: Implementation using OpenInference semantic conventions
 
-        invoke_bedrock_agent(
-            inputText=question,
-            agentId=agentId,
-            agentAliasId=agentAliasId,
-            sessionId=sessionId,
-            userId=userId,
-            provider=trace_collector,
-            show_traces=True
-        )
-    except Exception as e:
-        logger.error(f"Error invoking agent: {str(e)}")
-```
+- /opentelemetry-instrumentation: Implementation using OpenTelemetry standards
+
+Each subdirectory contains its own detailed README with specific setup instructions and usage examples.
+
+### Key Features of Both Implementations
+Complete span hierarchy with proper parent-child relationships
+Token usage tracking for LLM operations
+Support for both streaming and non-streaming responses
+Compatible with multiple observability platforms (Arize, Langfuse, etc.)
+Detailed trace and performance metrics
+
+## Contributing
+Contributions are welcome as we continue to evolve these tools alongside emerging industry standards for GenAI observability.

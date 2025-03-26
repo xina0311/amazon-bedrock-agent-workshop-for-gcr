@@ -78,6 +78,7 @@ function LayoutApp() {
         <Typography variant="body2" sx={{ pb: 1, pl: 2, pr: 2, fontSize: '0.775rem' }}>
             &copy;{ new Date().getFullYear() }, Amazon Web Services, Inc. or its affiliates. All rights reserved.
         </Typography>
+        <img src="/images/Powered-By_logo-horiz_RGB.png" />
       </Box>
 
       <Box sx={{ position: 'fixed', bottom: "8px", right: "12px" }}> 

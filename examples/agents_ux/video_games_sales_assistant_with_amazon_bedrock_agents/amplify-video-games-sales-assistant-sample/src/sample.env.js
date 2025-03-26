@@ -20,30 +20,56 @@ const WELCOME_MESSAGE = "I'm your Video Games Sales Data Analyst, crunching data
 
 const MAX_LENGTH_INPUT_SEARCH = 140;
 const MODEL_ID_FOR_CHART_AND_DASHBOARD = "us.anthropic.claude-3-5-sonnet-20241022-v2:0";
-const CHART_PROMPT = "Help me to create chart configuartion in React.js for \"ApexCharts\" using the following information:\n\
+const CHART_PROMPT = "\n\
+Create detailed ApexCharts.js configurations based on the information provided to support the answer. Focus on meaningful data analysis and visually appealing charts.\n\
+\n\
+Input Data\n\
 \n\
 <information>\n\
-    <data_sources>\n\
-        <<data_sources>>\n\
-    </data_sources>\n\
     <summary>\n\
         <<answer>>\n\
     </summary>\n\
+    <data_sources>\n\
+        <<data_sources>>\n\
+    </data_sources>\n\
 </information>\n\
 \n\
-For your answer include:\n\
-- Provide the series and options for the React ApexCharts.\n\
-- Use the appropriate chart type based on the data saources.\n\
-- A caption in an summary executive-style format based on the information provided (The minimum length is 140 characters, and the maximum length is 50 words).\n\
+The following is the only required output format for a Chart:\n\
 \n\
-Strict Rules:\n\
-- Provide a chart configuration only if the data is enough and suitable for being presented as a chart.\n\
-- If needed provide the formatter attribute in string format, always using a function.\n\
-- For datetime values, use an ascending order.\n\
-- Use the data sources to create the chart configuration, use the values as is.\n\
-- Provide titles, subtitles or descriptions in the same language as the <summary> provided.\n\
+<has_chart>1</has_chart>\n\
+<chart_type>[bar/line/pie/etc]</chart_type>\n\
+<chart_configuration>[JSON validate format with series and options]</chart_configuration>\n\
+<caption>[Insightful analysis about the data chart in 20-40 words]</caption>\n\
 \n\
-Those are some examples of series and options depending of the chart type:\n\
+If you do not have a chart configuration, use only the following output format:\n\
+\n\
+<has_chart>0</has_chart>\n\
+<rationale>[The reason to do not generate a chart configuration, max 12 words]</rationale>\n\
+\n\
+Chart Requirements\n\
+\n\
+   - Provide only 1 chart configuration\n\
+   - Must include:\n\
+      - Appropriate chart type for the data\n\
+      - Complete series and options configuration\n\
+\n\
+ApexChartsx Technical Specifications\n\
+\n\
+    - Provide the formatter function value as a string in double quotes\n\
+    - Use standard ApexCharts.js for React.js syntax\n\
+    - Format all property names and string values with double quotes\n\
+    - Include appropriate titles, subtitles and axis labels\n\
+    - Configure for light mode viewing\n\
+    - Use default text format styles\n\
+    - Format decimal values to two places using formatter functions\n\
+    - Use simple JavaScript functions (no moment.js)\n\
+\n\
+ApexChartsx Rules to Avoid Known Erros\n\
+\n\
+   - Multiple Y Axis for bars are not supported. Switch to column chart by setting plotOptions.bar.horizontal=false\n\
+\n\
+Example Chart Configurations\n\
+\n\
 <ChartExamples>\n\
   <Chart description=\"Line Basic\">\n\
     <type>line</type>\n\
@@ -262,19 +288,7 @@ Those are some examples of series and options depending of the chart type:\n\
     <configuartion>\n\
   </Chart>\n\
 \n\
-</ChartExamples>\n\
-\n\
-Use the following format for your answer if you have a chart configuration:\n\
-\n\
-- If you have a chart configuration use this format:\n\
-<has_chart>1</has_chart>\n\
-<chart_type></chart_type>\n\
-<chart_configuration>(Attributes and string values should be enclosed between double quotes for the JavaScript array/object format.)</chart_configuration>\n\
-<caption></caption>\n\
-\n\
-- If you do not have a chart configuration use this format:\n\
-<has_chart>0</has_chart>\n\
-<rationale>The reason to do not generate a chart configuration, max 12 words</rationale>";
+</ChartExamples>";
 
 export { AGENT_ID, 
     AGENT_ALIAS_ID, 

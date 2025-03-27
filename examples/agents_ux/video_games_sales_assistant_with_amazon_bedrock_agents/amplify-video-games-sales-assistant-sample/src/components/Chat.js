@@ -55,7 +55,7 @@ const Chat = ({}) => {
     useLayoutEffect(() => {
         function updateSize() {
             setSize([window.innerWidth, window.innerHeight]);
-            const myh = window.innerHeight-172;
+            const myh = window.innerHeight-220;
             if (myh<346){
                 setHeight(346)
             }else{

@@ -7,8 +7,6 @@
 1. Follow setup instructions [here](../../../README.md#getting-started)
 2. Create .env file with [.env.example](./.env.example)
 
-![env](./images/env.png)
-
 3. Install requirements
 
 ```bash

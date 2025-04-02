@@ -13,6 +13,9 @@
 > Configuring and invoking an inline agent feature is in preview release for Amazon Bedrock and is subject to change.
 > Amazon Bedrock Inline Agent SDK is currently in beta.
 
+> [!IMPORTANT]
+> Never expose AWS keys publicly, use least privilege IAM roles, and rotate credentials every 90 days. Utilize AWS Secrets Manager, implement MFA, avoid hard-coding credentials, and continuously monitor access.
+
 - Use Amazon Bedrock Agents to orchestrate agentic workflows using tools from any MCP server [[1]](https://github.com/modelcontextprotocol/servers) [[2]](https://github.com/punkpeye/awesome-mcp-servers).
 - Monitor and evaluate your Amazon Bedrock Agent responses with the `@observe` decorator using [langfuse](https://github.com/langfuse/langfuse) and [phoenix](https://phoenix.arize.com/).
 - Utilize local implementations of tools with Amazon Bedrock Agents - no AWS Lambda required.

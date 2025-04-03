@@ -2,11 +2,14 @@
 
 Amazon Bedrock Agents now supports all models from Amazon Bedrock so that you can create agents with any foundation model. Currently, some of the offered models are optimized with prompts/parsers fine-tuned for integrating with the agents architecture. Over time, we plan to offer optimization for all of the offered models.
 
+Refer to [this documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/working-with-models-not-yet-optimized.html) for more information on models not yet optimized
+
+
 If you’ve selected a model for which optimization is not yet available, you can override the prompts to extract better responses, and if needed, override the parsers. See [Modify parser Lambda function in Amazon Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more information.
 
 The prompts used by the not yet optimized models use the [Bedrock Converse API](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html) format with a system prompt as well the messages format. You can use [placeholder variables](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-placeholders.html) supported by Bedrock Agents in your prompt. Functions will be executed using the converseAPI `toolConfig` parameter. When the model returns a tool as output, Bedrock Agents will handle the tool execution if you connect a Lambda function or return the correct tools configuration if you opt to use [Return of Control](https://docs.aws.amazon.com/bedrock/latest/userguide/agents-returncontrol.html).
 
-In this folder we provide an example of a Mistral Large model that has not yet been optimized for Bedrock Agents. As Mistral Large has not yet been optimized, we will override the orchestration prompt for better responses. We will use `$instruction$`, `$knowledge_base_additional_guideline$`, `$prompt_session_attributes$`, `$question$` and `$agent_scratchpad$` to overwrite our orchestration prompt
+In this folder we provide an example comparing 4 different models (Llama 3.3, Mistral Large, Deepseek R1, and Claude 3.5 Sonnet v2). The first three have not been optimized for Bedrock Agents but have a variety of compatibilities with the feature, while Claude 3.5 has been optimized and provides a control. For the other 3 models we will adjust them to improve responses. For example, as Mistral Large has not yet been optimized, we will override the orchestration prompt for better responses. We will use `$instruction$`, `$knowledge_base_additional_guideline$`, `$prompt_session_attributes$`, `$question$` and `$agent_scratchpad$` to overwrite our orchestration prompt.
 
 
 ## Agent Architecture

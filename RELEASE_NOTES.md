@@ -1,3 +1,8 @@
+## 4/3/2025
+
+Added examples for agents not yet optimized with Bedrock Agents 
+- [Contract Assistant Agent](/examples/multi_agent_collaboration/not_yet_optimized_models_agent/)
+- [Contract Assistant Agent](/examples/agents/agent_with_models_not_yet_optimized_for_bedrock_agents/)
 
 ## 3/31/2025
 

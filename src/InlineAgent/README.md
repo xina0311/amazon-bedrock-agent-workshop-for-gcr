@@ -321,7 +321,7 @@ For differences between Langfuse and Phoenix checkout this [blog post](https://l
 1. [Time MCP Server](./examples/mcp/mcp_time/)
 2. [Perplexity MCP server](./examples/mcp/mcp_perplexity/)
 3. [Amazon Bedrock KnowledgeBase MCP Server](./examples/mcp/mcp_aws_kb/)
-4. [Connect MCP Server via SSE](./examples/mcp/mcp_aws_kb/)
+4. [Connect MCP Server via SSE](./examples/mcp/mcp_sse/)
 5. [Cost explorer agent](./examples/mcp/cost_explorer_agent/) - Integrate Perplexity MCP server, AWS Cost explorer MCP server, and code interpreter.
 
 ### Langchain Tools Examples

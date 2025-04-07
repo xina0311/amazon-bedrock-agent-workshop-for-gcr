@@ -14,8 +14,8 @@
 3. Setup `aws-cost-explorer-mcp-server` MCP server
 
 ```python
-git clone https://github.com/aarora79/aws-cost-explorer-mcp-server.git
-cd aws-cost-explorer-mcp-server/
+git clone https://github.com/aws-samples/sample-cloud-spend-mcp-server.git
+cd sample-cloud-spend-mcp-server/
 docker build -t aws-cost-explorer-mcp .
 ```
 

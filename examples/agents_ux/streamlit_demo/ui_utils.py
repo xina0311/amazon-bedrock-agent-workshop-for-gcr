@@ -3,7 +3,20 @@ import streamlit as st
 import datetime
 import json
 import math
+import logging
+import traceback
 from src.utils.bedrock_agent import Task
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("streamlit_demo.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 def make_full_prompt(tasks, additional_instructions, processing_type="sequential"):
     """Build a full prompt from tasks and instructions."""
@@ -32,132 +45,157 @@ be sure to include the comprehensive text details as input to the task.\n\n"""
 
 def process_routing_trace(event, step, _sub_agent_name, _time_before_routing=None):
     """Process routing classifier trace events."""
-   
-    _route = event['trace']['trace']['routingClassifierTrace']
-    
-    if 'modelInvocationInput' in _route:
-        #print("Processing modelInvocationInput")
-        container = st.container(border=True)                            
-        container.markdown(f"""**Choosing a collaborator for this request...**""")
-        return datetime.datetime.now(), step, _sub_agent_name, None, None
+    try:
+        _route = event['trace']['trace']['routingClassifierTrace']
         
-    if 'modelInvocationOutput' in _route and _time_before_routing:
-        #print("Processing modelInvocationOutput")
-        _llm_usage = _route['modelInvocationOutput']['metadata']['usage']
-        inputTokens = _llm_usage['inputTokens']
-        outputTokens = _llm_usage['outputTokens']
-        
-        _route_duration = datetime.datetime.now() - _time_before_routing
+        if 'modelInvocationInput' in _route:
+            logger.info("Processing routing modelInvocationInput")
+            container = st.container(border=True)                            
+            container.markdown(f"""**Choosing a collaborator for this request...**""")
+            return datetime.datetime.now(), step, _sub_agent_name, None, None
+            
+        if 'modelInvocationOutput' in _route and _time_before_routing:
+            logger.info("Processing routing modelInvocationOutput")
+            _llm_usage = _route['modelInvocationOutput']['metadata']['usage']
+            inputTokens = _llm_usage['inputTokens']
+            outputTokens = _llm_usage['outputTokens']
+            
+            _route_duration = datetime.datetime.now() - _time_before_routing
 
-        _raw_resp_str = _route['modelInvocationOutput']['rawResponse']['content']
-        _raw_resp = json.loads(_raw_resp_str)
-        _classification = _raw_resp['content'][0]['text'].replace('<a>', '').replace('</a>', '')
+            _raw_resp_str = _route['modelInvocationOutput']['rawResponse']['content']
+            logger.info(f"Raw response string: {_raw_resp_str[:500]}...")
+            
+            try:
+                _raw_resp = json.loads(_raw_resp_str)
+                logger.info(f"Parsed JSON response: {json.dumps(_raw_resp)[:500]}...")
+                
+                # Handle different response formats based on model
+                if 'content' in _raw_resp and isinstance(_raw_resp['content'], list):
+                    _classification = _raw_resp['content'][0]['text'].replace('<a>', '').replace('</a>', '')
+                elif 'completion' in _raw_resp:
+                    _classification = _raw_resp['completion'].replace('<a>', '').replace('</a>', '')
+                else:
+                    logger.warning(f"Unexpected response format: {_raw_resp}")
+                    _classification = "undecidable"
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decode error: {e}")
+                logger.error(f"Raw response that caused error: {_raw_resp_str}")
+                _classification = "undecidable"
 
-        if _classification == "undecidable":
-            text = f"No matching collaborator. Revert to 'SUPERVISOR' mode for this request."
-        elif _classification in (_sub_agent_name, 'keep_previous_agent'):
-            step = math.floor(step + 1)
-            text = f"Continue conversation with previous collaborator"
-        else:
-            _sub_agent_name = _classification
-            step = math.floor(step + 1)
-            text = f"Use collaborator: '{_sub_agent_name}'"
+            if _classification == "undecidable":
+                text = f"No matching collaborator. Revert to 'SUPERVISOR' mode for this request."
+            elif _classification in (_sub_agent_name, 'keep_previous_agent'):
+                step = math.floor(step + 1)
+                text = f"Continue conversation with previous collaborator"
+            else:
+                _sub_agent_name = _classification
+                step = math.floor(step + 1)
+                text = f"Use collaborator: '{_sub_agent_name}'"
 
-        time_text = f"Intent classifier took {_route_duration.total_seconds():,.1f}s"
-        container = st.container(border=True)                            
-        container.write(text)
-        container.write(time_text)
-        
-        return step, _sub_agent_name, inputTokens, outputTokens
+            time_text = f"Intent classifier took {_route_duration.total_seconds():,.1f}s"
+            container = st.container(border=True)                            
+            container.write(text)
+            container.write(time_text)
+            
+            return step, _sub_agent_name, inputTokens, outputTokens
+    except Exception as e:
+        logger.error(f"Error in process_routing_trace: {e}")
+        logger.error(traceback.format_exc())
+        return None
 
 def process_orchestration_trace(event, agentClient, step):
     """Process orchestration trace events."""
-    _orch = event['trace']['trace']['orchestrationTrace']
-    inputTokens = 0
-    outputTokens = 0
-    
-    if "invocationInput" in _orch:
-        _input = _orch['invocationInput']
+    try:
+        _orch = event['trace']['trace']['orchestrationTrace']
+        inputTokens = 0
+        outputTokens = 0
         
-        if 'knowledgeBaseLookupInput' in _input:
-            with st.expander("Using knowledge base", False, icon=":material/plumbing:"):
-                st.write("knowledge base id: " + _input["knowledgeBaseLookupInput"]["knowledgeBaseId"])
-                st.write("query: " + _input["knowledgeBaseLookupInput"]["text"].replace('$', '\$'))
+        if "invocationInput" in _orch:
+            _input = _orch['invocationInput']
+            
+            if 'knowledgeBaseLookupInput' in _input:
+                with st.expander("Using knowledge base", False, icon=":material/plumbing:"):
+                    st.write("knowledge base id: " + _input["knowledgeBaseLookupInput"]["knowledgeBaseId"])
+                    st.write("query: " + _input["knowledgeBaseLookupInput"]["text"].replace('$', '\$'))
+                    
+            if "actionGroupInvocationInput" in _input:
+                function = _input["actionGroupInvocationInput"]["function"]
+                with st.expander(f"Invoking Tool - {function}", False, icon=":material/plumbing:"):
+                    st.write("function : " + function)
+                    st.write("type: " + _input["actionGroupInvocationInput"]["executionType"])
+                    if 'parameters' in _input["actionGroupInvocationInput"]:
+                        st.write("*Parameters*")
+                        params = _input["actionGroupInvocationInput"]["parameters"]
+                        st.table({
+                            'Parameter Name': [p["name"] for p in params],
+                            'Parameter Value': [p["value"] for p in params]
+                        })
+
+            if 'codeInterpreterInvocationInput' in _input:
+                with st.expander("Code interpreter tool usage", False, icon=":material/psychology:"):
+                    gen_code = _input['codeInterpreterInvocationInput']['code']
+                    st.code(gen_code, language="python")
+                        
+        if "modelInvocationOutput" in _orch:
+            if "usage" in _orch["modelInvocationOutput"]["metadata"]:
+                inputTokens = _orch["modelInvocationOutput"]["metadata"]["usage"]["inputTokens"]
+                outputTokens = _orch["modelInvocationOutput"]["metadata"]["usage"]["outputTokens"]
+                        
+        if "rationale" in _orch:
+            if "agentId" in event["trace"]:
+                agentData = agentClient.get_agent(agentId=event["trace"]["agentId"])
+                agentName = agentData["agent"]["agentName"]
+                chain = event["trace"]["callerChain"]
                 
-        if "actionGroupInvocationInput" in _input:
-            function = _input["actionGroupInvocationInput"]["function"]
-            with st.expander(f"Invoking Tool - {function}", False, icon=":material/plumbing:"):
-                st.write("function : " + function)
-                st.write("type: " + _input["actionGroupInvocationInput"]["executionType"])
-                if 'parameters' in _input["actionGroupInvocationInput"]:
-                    st.write("*Parameters*")
-                    params = _input["actionGroupInvocationInput"]["parameters"]
-                    st.table({
-                        'Parameter Name': [p["name"] for p in params],
-                        'Parameter Value': [p["value"] for p in params]
-                    })
+                container = st.container(border=True)
+                
+                if len(chain) <= 1:
+                    step = math.floor(step + 1)
+                    container.markdown(f"""#### Step  :blue[{round(step,2)}]""")
+                else:
+                    step = step + 0.1
+                    container.markdown(f"""###### Step {round(step,2)} Sub-Agent  :red[{agentName}]""")
+                
+                container.write(_orch["rationale"]["text"].replace('$', '\$'))
 
-        if 'codeInterpreterInvocationInput' in _input:
-            with st.expander("Code interpreter tool usage", False, icon=":material/psychology:"):
-                gen_code = _input['codeInterpreterInvocationInput']['code']
-                st.code(gen_code, language="python")
-                    
-    if "modelInvocationOutput" in _orch:
-        if "usage" in _orch["modelInvocationOutput"]["metadata"]:
-            inputTokens = _orch["modelInvocationOutput"]["metadata"]["usage"]["inputTokens"]
-            outputTokens = _orch["modelInvocationOutput"]["metadata"]["usage"]["outputTokens"]
-                    
-    if "rationale" in _orch:
-        if "agentId" in event["trace"]:
-            agentData = agentClient.get_agent(agentId=event["trace"]["agentId"])
-            agentName = agentData["agent"]["agentName"]
-            chain = event["trace"]["callerChain"]
+        if "observation" in _orch:
+            _obs = _orch['observation']
             
-            container = st.container(border=True)
-            
-            if len(chain) <= 1:
-                step = math.floor(step + 1)
-                container.markdown(f"""#### Step  :blue[{round(step,2)}]""")
-            else:
-                step = step + 0.1
-                container.markdown(f"""###### Step {round(step,2)} Sub-Agent  :red[{agentName}]""")
-            
-            container.write(_orch["rationale"]["text"].replace('$', '\$'))
+            if 'knowledgeBaseLookupOutput' in _obs:
+                with st.expander("Knowledge Base Response", False, icon=":material/psychology:"):
+                    _refs = _obs['knowledgeBaseLookupOutput']['retrievedReferences']
+                    _ref_count = len(_refs)
+                    st.write(f"{_ref_count} references")
+                    for i, _ref in enumerate(_refs, 1):
+                        st.write(f"  ({i}) {_ref['content']['text'][0:200]}...")
 
-    if "observation" in _orch:
-        _obs = _orch['observation']
-        
-        if 'knowledgeBaseLookupOutput' in _obs:
-            with st.expander("Knowledge Base Response", False, icon=":material/psychology:"):
-                _refs = _obs['knowledgeBaseLookupOutput']['retrievedReferences']
-                _ref_count = len(_refs)
-                st.write(f"{_ref_count} references")
-                for i, _ref in enumerate(_refs, 1):
-                    st.write(f"  ({i}) {_ref['content']['text'][0:200]}...")
+            if 'actionGroupInvocationOutput' in _obs:
+                with st.expander("Tool Response", False, icon=":material/psychology:"):
+                    st.write(_obs['actionGroupInvocationOutput']['text'].replace('$', '\$'))
 
-        if 'actionGroupInvocationOutput' in _obs:
-            with st.expander("Tool Response", False, icon=":material/psychology:"):
-                st.write(_obs['actionGroupInvocationOutput']['text'].replace('$', '\$'))
+            if 'codeInterpreterInvocationOutput' in _obs:
+                with st.expander("Code interpreter tool usage", False, icon=":material/psychology:"):
+                    if 'executionOutput' in _obs['codeInterpreterInvocationOutput']:
+                        raw_output = _obs['codeInterpreterInvocationOutput']['executionOutput']
+                        st.code(raw_output)
 
-        if 'codeInterpreterInvocationOutput' in _obs:
-            with st.expander("Code interpreter tool usage", False, icon=":material/psychology:"):
-                if 'executionOutput' in _obs['codeInterpreterInvocationOutput']:
-                    raw_output = _obs['codeInterpreterInvocationOutput']['executionOutput']
-                    st.code(raw_output)
+                    if 'executionError' in _obs['codeInterpreterInvocationOutput']:
+                        error_text = _obs['codeInterpreterInvocationOutput']['executionError']
+                        st.write(f"Code interpretation error: {error_text}")
 
-                if 'executionError' in _obs['codeInterpreterInvocationOutput']:
-                    error_text = _obs['codeInterpreterInvocationOutput']['executionError']
-                    st.write(f"Code interpretation error: {error_text}")
+                    if 'files' in _obs['codeInterpreterInvocationOutput']:
+                        files_generated = _obs['codeInterpreterInvocationOutput']['files']
+                        st.write(f"Code interpretation files generated:\n{files_generated}")
 
-                if 'files' in _obs['codeInterpreterInvocationOutput']:
-                    files_generated = _obs['codeInterpreterInvocationOutput']['files']
-                    st.write(f"Code interpretation files generated:\n{files_generated}")
-
-        if 'finalResponse' in _obs:
-            with st.expander("Agent Response", False, icon=":material/psychology:"):
-                st.write(_obs['finalResponse']['text'].replace('$', '\$'))
-            
-    return step, inputTokens, outputTokens
+            if 'finalResponse' in _obs:
+                with st.expander("Agent Response", False, icon=":material/psychology:"):
+                    st.write(_obs['finalResponse']['text'].replace('$', '\$'))
+                
+        return step, inputTokens, outputTokens
+    except Exception as e:
+        logger.error(f"Error in process_orchestration_trace: {e}")
+        logger.error(traceback.format_exc())
+        return None
 
 def invoke_agent(input_text, session_id, task_yaml_content):
     """Main agent invocation and response processing."""
@@ -179,6 +217,9 @@ def invoke_agent(input_text, session_id, task_yaml_content):
 
     # Invoke agent
     try:
+        logger.info(f"Invoking agent with input: {messagesStr[:500]}...")
+        logger.info(f"Agent ID: {_bot_config['agent_id']}, Alias ID: {_bot_config['agent_alias_id']}")
+        
         if 'session_attributes' in _bot_config:
             session_state = {
                 "sessionAttributes": _bot_config['session_attributes']['sessionAttributes']
@@ -202,8 +243,11 @@ def invoke_agent(input_text, session_id, task_yaml_content):
                 inputText=messagesStr,
                 enableTrace=True
             )
+        
+        logger.info("Agent invocation successful")
     except Exception as e:
-        print(f"Error invoking agent: {e}")
+        logger.error(f"Error invoking agent: {e}")
+        logger.error(traceback.format_exc())
         raise e
 
     # Process response
@@ -215,42 +259,59 @@ def invoke_agent(input_text, session_id, task_yaml_content):
     _total_llm_calls = 0
     
     with st.spinner("Processing ....."):
-        for event in response.get("completion"):
-            if "chunk" in event:
-                yield event["chunk"]["bytes"].decode("utf-8").replace('$', '\$')
-                
-            if "trace" in event:
-                if 'routingClassifierTrace' in event['trace']['trace']:
-                    #print("Processing routing trace...")
-                    result = process_routing_trace(event, step, _sub_agent_name, _time_before_routing)
-                    if result:
-                        if len(result) == 5:  # Initial invocation
-                            #print("Initial routing invocation")
-                            _time_before_routing, step, _sub_agent_name, in_tokens, out_tokens = result
-                            if in_tokens and out_tokens:
-                                inputTokens += in_tokens
-                                outputTokens += out_tokens
-                                _total_llm_calls += 1
-                        else:  # Subsequent invocation
-                            #print("Subsequent routing invocation")
-                            step, _sub_agent_name, in_tokens, out_tokens = result
-                            if in_tokens and out_tokens:
-                                inputTokens += in_tokens
-                                outputTokens += out_tokens
-                                _total_llm_calls += 1
+        try:
+            for event in response.get("completion"):
+                if "chunk" in event:
+                    try:
+                        chunk_text = event["chunk"]["bytes"].decode("utf-8").replace('$', '\$')
+                        logger.debug(f"Received chunk: {chunk_text[:100]}...")
+                        yield chunk_text
+                    except Exception as e:
+                        logger.error(f"Error processing chunk: {e}")
+                        logger.error(traceback.format_exc())
+                        yield f"Error processing response chunk: {str(e)}"
+                    
+                if "trace" in event:
+                    try:
+                        if 'routingClassifierTrace' in event['trace']['trace']:
+                            result = process_routing_trace(event, step, _sub_agent_name, _time_before_routing)
+                            if result:
+                                if len(result) == 5:  # Initial invocation
+                                    _time_before_routing, step, _sub_agent_name, in_tokens, out_tokens = result
+                                    if in_tokens and out_tokens:
+                                        inputTokens += in_tokens
+                                        outputTokens += out_tokens
+                                        _total_llm_calls += 1
+                                else:  # Subsequent invocation
+                                    step, _sub_agent_name, in_tokens, out_tokens = result
+                                    if in_tokens and out_tokens:
+                                        inputTokens += in_tokens
+                                        outputTokens += out_tokens
+                                        _total_llm_calls += 1
 
-                        
-                if "orchestrationTrace" in event["trace"]["trace"]:
-                    result = process_orchestration_trace(event, agentClient, step)
-                    if result:
-                        step, in_tokens, out_tokens = result
-                        if in_tokens and out_tokens:
-                            inputTokens += in_tokens
-                            outputTokens += out_tokens
-                            _total_llm_calls += 1
+                            
+                        if "orchestrationTrace" in event["trace"]["trace"]:
+                            result = process_orchestration_trace(event, agentClient, step)
+                            if result:
+                                step, in_tokens, out_tokens = result
+                                if in_tokens and out_tokens:
+                                    inputTokens += in_tokens
+                                    outputTokens += out_tokens
+                                    _total_llm_calls += 1
+                    except Exception as e:
+                        logger.error(f"Error processing trace: {e}")
+                        logger.error(traceback.format_exc())
+        except Exception as e:
+            logger.error(f"Error processing response: {e}")
+            logger.error(traceback.format_exc())
+            yield f"Error processing response: {str(e)}"
 
         # Display token usage at the end
-        container = st.container(border=True)
-        container.markdown("Total Input Tokens : **" + str(inputTokens) + "**")
-        container.markdown("Total Output Tokens : **" + str(outputTokens) + "**")
-        container.markdown("Total LLM Calls : **" + str(_total_llm_calls) + "**")
+        try:
+            container = st.container(border=True)
+            container.markdown("Total Input Tokens : **" + str(inputTokens) + "**")
+            container.markdown("Total Output Tokens : **" + str(outputTokens) + "**")
+            container.markdown("Total LLM Calls : **" + str(_total_llm_calls) + "**")
+        except Exception as e:
+            logger.error(f"Error displaying token usage: {e}")
+            logger.error(traceback.format_exc())

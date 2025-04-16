@@ -78,7 +78,7 @@ def main(args):
             kb_descr=dedent("""
             Use this knowledge base to answer general questions about mortgages, like how to refinnance, 
             or the difference between 15-year and 30-year mortgages."""),
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            llm="us.amazon.nova-pro-v1:0"
         )
 
         existing_mortgage_assistant = Agent.create(
@@ -116,7 +116,7 @@ def main(args):
                     }
                 }
             ],
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            llm="us.amazon.nova-pro-v1:0"
         )
 
         mortgage_application_agent = Agent.create(
@@ -192,7 +192,7 @@ def main(args):
                     }
                 }
             ],
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+            llm="us.amazon.nova-pro-v1:0",
             code_interpreter=True,  # lets us do mortgage calcs accurately
             verbose=False
         )
@@ -219,7 +219,7 @@ def main(args):
     </instruction_2>
     </greeting_instructions>
     """,
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+            llm="us.amazon.nova-pro-v1:0",
             code_interpreter=True,  # lets us do mortgage calcs accurately
             verbose=False
         )
@@ -264,7 +264,7 @@ def main(args):
                                                                                   existing_mortgage_assistant,
                                                                                   general_mortgage_questions,
                                                                                   mortgage_greeting_agent],
-                                                            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+                                                            llm="us.amazon.nova-pro-v1:0",
                                                             verbose=False)
 
     else:
@@ -278,7 +278,7 @@ def main(args):
             kb_descr=dedent("""
             Use this knowledge base to answer general questions about mortgages, like how to refinnance, 
             or the difference between 15-year and 30-year mortgages."""),
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            llm="us.amazon.nova-pro-v1:0"
         )
 
         existing_mortgage_assistant = Agent.create(
@@ -316,7 +316,7 @@ def main(args):
                     }
                 }
             ],
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            llm="us.amazon.nova-pro-v1:0"
         )
 
         mortgage_application_agent = Agent.create(
@@ -392,7 +392,7 @@ def main(args):
                     }
                 }
             ],
-            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+            llm="us.amazon.nova-pro-v1:0",
             code_interpreter=True,  # lets us do mortgage calcs accurately
             verbose=False
         )
@@ -431,7 +431,7 @@ def main(args):
                                                             collaborator_objects=[mortgage_application_agent,
                                                                                   existing_mortgage_assistant,
                                                                                   general_mortgage_questions],
-                                                            llm="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+                                                            llm="us.amazon.nova-pro-v1:0",
                                                             verbose=False)
 
     if args.recreate_agents == "false":

@@ -65,7 +65,15 @@ class KnowledgeBasesForAmazonBedrock:
             .get_caller_identity()
             .get("Account")
         )
-        self.suffix = random.randrange(200, 900)
+        
+        # 生成更复杂的后缀，包含账户ID的最后4位和随机数
+        if suffix is None:
+            random_part = random.randrange(1000, 9999)
+            account_part = self.account_number[-4:]
+            self.suffix = f"{account_part}-{random_part}"
+        else:
+            self.suffix = suffix
+            
         self.identity = boto3.client(
             "sts", region_name=self.region_name
         ).get_caller_identity()["Arn"]
@@ -133,7 +141,8 @@ class KnowledgeBasesForAmazonBedrock:
             # self.kb_description = kb_description
             if data_bucket_name is None:
                 kb_name_temp = kb_name.replace("_", "-")
-                data_bucket_name = f"{kb_name_temp}-{self.suffix}"
+                timestamp = int(time.time())
+                data_bucket_name = f"{kb_name_temp}-{self.suffix}-{timestamp}"
                 print(
                     f"KB bucket name not provided, creating a new one called: {data_bucket_name}"
                 )

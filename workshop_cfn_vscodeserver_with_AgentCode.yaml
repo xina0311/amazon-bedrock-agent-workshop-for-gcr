@@ -199,7 +199,9 @@ Resources:
               - iam:DeleteRolePolicy
               - iam:AttachRolePolicy
               - iam:DetachRolePolicy
+              - iam:CreateServiceLinkedRole
             Resource:
+              - "arn:aws:iam::*:role/aws-service-role/observability.aoss.amazonaws*"
               - "arn:aws:iam::*:role/*AmazonBedrockExecutionRoleForKnowledgeBase*"
               - "arn:aws:iam::*:role/*bedrock*"
               - "arn:aws:iam::*:role/*lambda*"

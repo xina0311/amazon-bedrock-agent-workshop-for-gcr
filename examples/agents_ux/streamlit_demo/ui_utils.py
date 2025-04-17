@@ -71,9 +71,15 @@ def process_routing_trace(event, step, _sub_agent_name, _time_before_routing=Non
                 
                 # Handle different response formats based on model
                 if 'content' in _raw_resp and isinstance(_raw_resp['content'], list):
+                    # Claude Sonnet 格式
                     _classification = _raw_resp['content'][0]['text'].replace('<a>', '').replace('</a>', '')
                 elif 'completion' in _raw_resp:
+                    # 其他某些模型格式
                     _classification = _raw_resp['completion'].replace('<a>', '').replace('</a>', '')
+                elif 'output' in _raw_resp and 'message' in _raw_resp['output'] and 'content' in _raw_resp['output']['message']:
+                    # Nova Pro 格式
+                    _classification = _raw_resp['output']['message']['content'][0]['text'].replace('<a>', '').replace('</a>', '')
+                    logger.info(f"Extracted classification from Nova Pro format: {_classification}")
                 else:
                     logger.warning(f"Unexpected response format: {_raw_resp}")
                     _classification = "undecidable"

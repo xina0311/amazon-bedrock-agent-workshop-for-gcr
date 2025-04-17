@@ -200,6 +200,7 @@ Resources:
               - iam:AttachRolePolicy
               - iam:DetachRolePolicy
             Resource:
+              - "arn:aws:iam::*:role/*AmazonBedrockExecutionRoleForKnowledgeBase*"
               - "arn:aws:iam::*:role/*bedrock*"
               - "arn:aws:iam::*:role/*lambda*"
               - "arn:aws:iam::*:policy/*"
@@ -210,6 +211,7 @@ Resources:
               - "arn:aws:iam::*:role/*bedrock*"
               - "arn:aws:iam::*:role/*lambda*"
               - "arn:aws:iam::*:role/DEFAULT_AgentExecutionRole"
+              - "arn:aws:iam::*:role/AmazonBedrockExecutionRole*"
             Condition:
               StringEquals:
                 iam:PassedToService:

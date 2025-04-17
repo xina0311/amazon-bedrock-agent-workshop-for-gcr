@@ -1,6 +1,4 @@
-# Amazon Bedrock Agent Workshop for GCR
-
-<h2 align="center">Amazon Bedrock Agent 中国区工作坊</h2>
+<h2 align="center">Amazon Bedrock Agent 动手练习工作坊</h2>
 <p align="center">
   :wave: :wave: 欢迎来到 Amazon Bedrock Agent 中国区工作坊 :wave: :wave:
 </p>

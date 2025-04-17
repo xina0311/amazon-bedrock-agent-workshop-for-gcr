@@ -309,6 +309,24 @@ Resources:
               - sts:GetCallerIdentity
             Resource: "*"
 
+  # 添加 Systems Manager 权限
+  SSMPermissionsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Policy for Systems Manager permissions
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ssm:SendCommand
+              - ssm:GetCommandInvocation
+              - ssm:ListCommandInvocations
+              - ssm:DescribeInstanceInformation
+              - ssm:GetAutomationExecution
+              - ssm:StartAutomationExecution
+            Resource: "*"
+
   # IAM Role for EC2 Instance
   VSCodeServerRole:
     Type: AWS::IAM::Role
@@ -322,7 +340,8 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - !Ref BedrockWorkshopPolicy
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore  # 添加SSM访问权限，方便管理
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - !Ref SSMPermissionsPolicy
       Path: "/"
       RoleName: !Sub "${AWS::StackName}-VSCodeServerRole"
 
@@ -439,6 +458,161 @@ Resources:
           cd /home/ec2-user
           git clone https://github.com/xina0311/amazon-bedrock-agent-workshop-for-gcr.git
           chown -R ec2-user:ec2-user /home/ec2-user/amazon-bedrock-agent-workshop-for-gcr
+          
+          # 确保清理脚本可执行
+          chmod +x /home/ec2-user/amazon-bedrock-agent-workshop-for-gcr/workshop_cleanup.sh
+          
+          # 安装 SSM Agent (如果尚未安装)
+          echo "####################################################################################################"
+          echo "Ensuring SSM Agent is installed and running"
+          dnf install -y amazon-ssm-agent
+          systemctl enable amazon-ssm-agent
+          systemctl start amazon-ssm-agent
+  
+  # 创建 SSM 文档用于执行清理脚本
+  CleanupSSMDocument:
+    Type: AWS::SSM::Document
+    Properties:
+      DocumentType: Command
+      Content:
+        schemaVersion: '2.2'
+        description: 'Run workshop cleanup script'
+        parameters: {}
+        mainSteps:
+          - action: aws:runShellScript
+            name: runCleanupScript
+            inputs:
+              runCommand:
+                - 'cd /home/ec2-user/amazon-bedrock-agent-workshop-for-gcr'
+                - 'chmod +x workshop_cleanup.sh'
+                - './workshop_cleanup.sh'
+                - 'echo "Cleanup completed successfully"'
+
+  # 创建 CloudFormation 自定义资源来处理堆栈删除事件
+  CleanupCustomResource:
+    Type: AWS::CloudFormation::CustomResource
+    DependsOn: VSCodeServerInstance
+    Properties:
+      ServiceToken: !GetAtt CleanupFunction.Arn
+      InstanceId: !Ref VSCodeServerInstance
+      DocumentName: !Ref CleanupSSMDocument
+      Region: !Ref "AWS::Region"
+
+  # 创建 Lambda 执行角色
+  CleanupLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: SSMSendCommandPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:SendCommand
+                  - ssm:GetCommandInvocation
+                Resource: '*'
+
+  # 创建 Lambda 函数来处理 CloudFormation 自定义资源事件
+  CleanupFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt CleanupLambdaRole.Arn
+      Runtime: python3.9
+      Timeout: 300
+      Code:
+        ZipFile: |
+          import json
+          import logging
+          import boto3
+          import cfnresponse
+          import time
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def handler(event, context):
+              logger.info('Received event: %s', json.dumps(event))
+              
+              # 获取请求类型
+              request_type = event['RequestType']
+              
+              # 只在删除堆栈时执行清理
+              if request_type == 'Delete':
+                  try:
+                      # 获取实例 ID 和文档名称
+                      instance_id = event['ResourceProperties']['InstanceId']
+                      document_name = event['ResourceProperties']['DocumentName']
+                      region = event['ResourceProperties']['Region']
+                      
+                      # 创建 SSM 客户端
+                      ssm = boto3.client('ssm', region_name=region)
+                      
+                      # 检查实例是否在线
+                      try:
+                          response = ssm.describe_instance_information(
+                              Filters=[{'Key': 'InstanceIds', 'Values': [instance_id]}]
+                          )
+                          
+                          if len(response['InstanceInformationList']) > 0:
+                              # 发送命令执行清理脚本
+                              logger.info(f"Sending command to instance {instance_id}")
+                              command = ssm.send_command(
+                                  InstanceIds=[instance_id],
+                                  DocumentName=document_name,
+                                  Comment='Run cleanup script before stack deletion'
+                              )
+                              
+                              command_id = command['Command']['CommandId']
+                              
+                              # 等待命令完成
+                              max_retries = 10
+                              retries = 0
+                              
+                              while retries < max_retries:
+                                  time.sleep(10)  # 等待10秒
+                                  try:
+                                      result = ssm.get_command_invocation(
+                                          CommandId=command_id,
+                                          InstanceId=instance_id
+                                      )
+                                      
+                                      status = result['Status']
+                                      logger.info(f"Command status: {status}")
+                                      
+                                      if status in ['Success', 'Failed', 'Cancelled', 'TimedOut']:
+                                          if status == 'Success':
+                                              logger.info("Cleanup script executed successfully")
+                                          else:
+                                              logger.warning(f"Cleanup script execution {status}")
+                                          break
+                                  except Exception as e:
+                                      logger.warning(f"Error checking command status: {str(e)}")
+                                  
+                                  retries += 1
+                          else:
+                              logger.warning(f"Instance {instance_id} is not managed by SSM or not online")
+                      except Exception as e:
+                          logger.warning(f"Error checking instance status: {str(e)}")
+                      
+                      # 无论清理脚本是否成功执行，都返回成功以允许堆栈删除继续
+                      cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+                  except Exception as e:
+                      logger.error(f"Error during cleanup: {str(e)}")
+                      cfnresponse.send(event, context, cfnresponse.FAILED, {"Error": str(e)})
+              else:
+                  # 对于 Create 和 Update 请求，直接返回成功
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
   
 Outputs:
   VSCodeServerURL:

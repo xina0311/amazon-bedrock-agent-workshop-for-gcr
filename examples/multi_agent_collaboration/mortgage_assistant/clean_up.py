@@ -188,6 +188,87 @@ def find_kb_resources(kb_name, region=None):
         logger.error(f"查找知识库资源时出错: {str(e)}")
         return {}
 
+def find_and_delete_iam_roles_policies(prefix):
+    """
+    查找并删除以指定前缀开头的IAM角色和策略
+    
+    参数:
+    prefix (str): IAM角色和策略名称的前缀
+    """
+    try:
+        # 创建IAM客户端
+        iam_client = boto3.client('iam')
+        
+        # 查找并删除角色
+        paginator = iam_client.get_paginator('list_roles')
+        for page in paginator.paginate():
+            for role in page['Roles']:
+                role_name = role['RoleName']
+                if role_name.startswith(prefix):
+                    logger.info(f"找到IAM角色: {role_name}")
+                    
+                    # 删除角色策略
+                    try:
+                        # 列出并分离附加的策略
+                        attached_policies = iam_client.list_attached_role_policies(RoleName=role_name)
+                        for policy in attached_policies.get('AttachedPolicies', []):
+                            policy_arn = policy['PolicyArn']
+                            logger.info(f"分离策略 {policy['PolicyName']} 从角色 {role_name}")
+                            iam_client.detach_role_policy(RoleName=role_name, PolicyArn=policy_arn)
+                        
+                        # 列出并删除内联策略
+                        inline_policies = iam_client.list_role_policies(RoleName=role_name)
+                        for policy_name in inline_policies.get('PolicyNames', []):
+                            logger.info(f"删除内联策略 {policy_name} 从角色 {role_name}")
+                            iam_client.delete_role_policy(RoleName=role_name, PolicyName=policy_name)
+                        
+                        # 删除角色
+                        logger.info(f"删除角色: {role_name}")
+                        iam_client.delete_role(RoleName=role_name)
+                        logger.info(f"成功删除角色: {role_name}")
+                    except Exception as e:
+                        logger.warning(f"删除角色 {role_name} 时出错: {str(e)}")
+        
+        # 查找并删除策略
+        paginator = iam_client.get_paginator('list_policies')
+        for page in paginator.paginate(Scope='Local'):  # 只查找客户管理的策略
+            for policy in page['Policies']:
+                policy_name = policy['PolicyName']
+                policy_arn = policy['Arn']
+                if policy_name.startswith(prefix):
+                    logger.info(f"找到IAM策略: {policy_name}")
+                    
+                    try:
+                        # 列出并分离使用此策略的所有实体
+                        entities = iam_client.list_entities_for_policy(PolicyArn=policy_arn)
+                        
+                        # 从角色分离
+                        for role in entities.get('PolicyRoles', []):
+                            logger.info(f"分离策略 {policy_name} 从角色 {role['RoleName']}")
+                            iam_client.detach_role_policy(
+                                RoleName=role['RoleName'],
+                                PolicyArn=policy_arn
+                            )
+                        
+                        # 删除除默认版本外的所有版本
+                        versions = iam_client.list_policy_versions(PolicyArn=policy_arn)
+                        for version in versions.get('Versions', []):
+                            if not version.get('IsDefaultVersion', False):
+                                logger.info(f"删除策略版本: {version['VersionId']}")
+                                iam_client.delete_policy_version(
+                                    PolicyArn=policy_arn,
+                                    VersionId=version['VersionId']
+                                )
+                        
+                        # 删除策略
+                        logger.info(f"删除策略: {policy_name}")
+                        iam_client.delete_policy(PolicyArn=policy_arn)
+                        logger.info(f"成功删除策略: {policy_name}")
+                    except Exception as e:
+                        logger.warning(f"删除策略 {policy_name} 时出错: {str(e)}")
+    except Exception as e:
+        logger.warning(f"查找和删除IAM角色和策略时出错: {str(e)}")
+
 def clean_up(verbose=True, delete_s3_bucket=False, region=None):
     """
     清理所有部署的资源，包括Bedrock Agent、知识库、OpenSearch集合、Lambda函数和IAM角色/策略
@@ -252,6 +333,19 @@ def clean_up(verbose=True, delete_s3_bucket=False, region=None):
             delete_lambda_function(lambda_name, region)
         except Exception as e:
             logger.warning(f"删除Lambda函数时出错: {str(e)}")
+    
+    # 删除特定的Lambda函数
+    specific_lambda_functions = [
+        "mortgage_application_agent_ag",
+        "existing_mortgage_assistant_ag"
+    ]
+    
+    for function_name in specific_lambda_functions:
+        try:
+            logger.info(f"删除Lambda函数: {function_name}")
+            delete_lambda_function(function_name, region)
+        except Exception as e:
+            logger.warning(f"删除Lambda函数 {function_name} 时出错: {str(e)}")
     
     # 删除IAM角色和策略
     try:

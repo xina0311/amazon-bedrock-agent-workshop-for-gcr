@@ -34,11 +34,11 @@
    chmod +x workshop_cleanup.sh
    ./workshop_cleanup.sh
    ```
-   -- 清理过程会显示在终端中，您可以直观地看到资源被删除的过程
-   -- 清理日志也会保存在 `/var/log/workshop-cleanup.log`
+   - 清理过程会显示在终端中，您可以直观地看到资源被删除的过程
+   - 清理日志也会保存在 `/var/log/workshop-cleanup.log`
 
 2. 然后停止 EC2 实例
-   -- 作为备份措施，系统在停止时也会再次自动执行清理脚本，确保所有资源被正确删除
+   - 作为备份措施，系统在停止时也会再次自动执行清理脚本，确保所有资源被正确删除
 
 3. 确认清理完成后，可以删除 CloudFormation 堆栈
 

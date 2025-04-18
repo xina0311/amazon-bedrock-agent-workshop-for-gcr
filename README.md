@@ -9,24 +9,38 @@
 
 ## 工作坊指南
 
-完整的操作指南可以在这个地址找到：[基于Amazon Bedrock 构建按揭贷款多智能体应用](https://studio.us-east-1.prod.workshops.aws/preview/d674f40f-d636-4654-9322-04dafc7cc63e/builds/30a7eb13-bfdf-4ebe-bd1f-5eef38bd8565/zh-CN/4-lab-3)
+完整操作指南：[基于Amazon Bedrock 构建按揭贷款多智能体应用](https://catalog.us-east-1.prod.workshops.aws/workshops/d674f40f-d636-4654-9322-04dafc7cc63e/zh-CN/4-lab-3)
 
 ![Amazon Bedrock Multi Agent Collaboration Demo](images/workshop_bedrock_multi_agent.gif)
 
-*上图展示了按揭贷款多代理应用的组织结构*
+*上图展示了按揭贷款多智能体应用的组织结构*
 
 ## 自助实验环境部署
 
-如果您想在自己的AWS账户中自行完成这个动手练习，可以按照以下步骤操作：
+如果您是在自己的亚马逊云科技账户中完成这个动手练习，可以按照以下步骤操作：
 
 1. 使用 `workshop_cfn_vscodeserver_with_AgentCode.yaml` CloudFormation 模板部署实验资源。
-2. 模板会自动启动一台t3.large 规格的Amazon Linux EC2 实例，自动安装 VSCode Server 并克隆所需的代码仓库到 EC2 实例。
-3. 然后按照[动手操作指南](https://studio.us-east-1.prod.workshops.aws/preview/d674f40f-d636-4654-9322-04dafc7cc63e/builds/30a7eb13-bfdf-4ebe-bd1f-5eef38bd8565/zh-CN/4-lab-3)完成多智能体应用部署，并进行交互测试。
-4. 本实验还提供一个彩蛋，免费注册 [Amazon Builder ID](https://docs.aws.amazon.com/zh_cn/signin/latest/userguide/create-aws_builder_id.html)，安装 [Amazon Q Developer CLI 工具](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line.html)。体验 Q Chat 智能开发辅助工具提升代码相关工作效率
+2. 该模板会自动启动一台 t3.large 规格的 Amazon Linux EC2 实例，自动安装 VSCode Server 并克隆所需的代码仓库。
+3. 按照[动手操作指南](https://catalog.us-east-1.prod.workshops.aws/workshops/d674f40f-d636-4654-9322-04dafc7cc63e/zh-CN/4-lab-3)完成多智能体应用部署，并进行交互测试。
+4. 本实验还提供一个彩蛋，免费注册 [Amazon Builder ID](https://docs.aws.amazon.com/zh_cn/signin/latest/userguide/create-aws_builder_id.html)，安装 [Amazon Q Developer CLI 开发者助手工具](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/command-line.html)。体验 Q Chat 智能辅助工具提升开发效率。
 
 ## 实验清理
 
-**重要提示**：实验完成后，请记得执行 `workshop_cleanup.sh` 脚本以清理资源，避免不必要的费用产生。
+**重要提示**：实验完成后，请按照以下步骤清理资源，避免不必要的费用产生：
+
+1. 首先执行清理脚本，这个脚本将会删除所有 Bedrock Agent 相关资源：
+   ```bash
+   cd /home/ec2-user/amazon-bedrock-agent-workshop-for-gcr
+   chmod +x workshop_cleanup.sh
+   ./workshop_cleanup.sh
+   ```
+   -- 清理过程会显示在终端中，您可以直观地看到资源被删除的过程
+   -- 清理日志也会保存在 `/var/log/workshop-cleanup.log`
+
+2. 然后停止 EC2 实例
+   -- 作为备份措施，系统在停止时也会再次自动执行清理脚本，确保所有资源被正确删除
+
+3. 确认清理完成后，可以删除 CloudFormation 堆栈
 
 ## 主要功能
 
@@ -36,16 +50,13 @@
 - 体验多代理协作如何解决复杂问题
 - 实际操作部署mortgage_assistant（按揭助手）应用
 - 学习Amazon Bedrock的最佳实践
-
+- 体验Amazon Q Developer命令行开发助手，提升开发效率
+  
 ## 系统要求
 
 - 有效的AWS账户
-- 对Amazon Bedrock服务的访问权限
-- 基本的AWS CloudFormation使用经验
-
-## 注意事项
-
-本仓库中的示例仅用于教育和实验目的，不建议直接用于生产环境。请确保在实际应用中实施适当的安全措施和最佳实践。
+- 对 Amazon Bedrock服务的访问权限
+- 基本的 AWS CloudFormation使 用经验
 
 ---
 

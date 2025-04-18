@@ -468,8 +468,39 @@ Resources:
           dnf install -y amazon-ssm-agent
           systemctl enable amazon-ssm-agent
           systemctl start amazon-ssm-agent
+          
+          # 创建关机前自动执行清理脚本的服务
+          echo "####################################################################################################"
+          echo "Creating shutdown cleanup service"
+          cat > /etc/systemd/system/workshop-cleanup.service << 'EOF'
+[Unit]
+Description=Workshop Cleanup Service
+DefaultDependencies=no
+Before=shutdown.target reboot.target halt.target
+# 确保在网络仍然可用时执行
+After=network.target
+Conflicts=reboot.target
+# 确保在关机序列中尽早执行
+RequiresMountsFor=/home
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/ec2-user/amazon-bedrock-agent-workshop-for-gcr/workshop_cleanup.sh
+TimeoutStartSec=300
+RemainAfterExit=yes
+
+[Install]
+WantedBy=halt.target shutdown.target reboot.target
+EOF
+
+          # 启用清理服务
+          systemctl daemon-reload
+          systemctl enable workshop-cleanup.service
+          echo "Shutdown cleanup service installed and enabled"
   
-  # 注意：清理逻辑已被移除，因为 Workshop Studio 在终止事件后会自动清空所有资源并回收账号
+  # 注意：
+  # 如果您是在自己的账号中部署此模板，请在删除 CloudFormation 堆栈前先停止 EC2 实例
+  # 这样系统关机服务会自动执行清理脚本，确保所有 Bedrock Agent 资源被正确删除
   
 Outputs:
   VSCodeServerURL:
